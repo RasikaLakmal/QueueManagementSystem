@@ -4,6 +4,9 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm"
 export class Issues extends BaseEntity {
 
     @PrimaryGeneratedColumn()
+    id!: number
+
+    @Column({ unique: true })
     issue_id!: string
 
     @Column()

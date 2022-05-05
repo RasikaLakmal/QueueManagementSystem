@@ -3,7 +3,10 @@ import express,{Request, Response} from 'express';
 import { createConnection } from 'typeorm';
 import * as BodyParser from 'body-parser';
 import cors from 'cors';
-import postRoutes from './routes/postRoutes';
+import userRoutes from './routes/userRoutes';
+import authRoutes from './routes/authRoutes';
+import issuesRoutes from './routes/issuesRoutes';
+import counterPRoutes from './routes/counterPRoutes';
 const app = express();
 
 app.use(express.json());
@@ -14,8 +17,10 @@ createConnection().then(async (connection) => {
     app.use(cors());
     app.use(BodyParser.json());
 
-    app.use('/',postRoutes);
-
+    app.use('/api/user',userRoutes);
+    app.use('/api/auth',authRoutes);
+    app.use('/api/issue',issuesRoutes);
+    app.use('/api/cp',counterPRoutes);
     app.listen(3001, () => {
         console.log("started")
         })
