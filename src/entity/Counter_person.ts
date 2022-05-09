@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn  } from "typeorm"
 import * as bcrypt from "bcryptjs";
-import * as jwt from "jsonwebtoken";
+import {Counter} from '../entity/Counter';
 
 @Entity()
 export class Counter_person extends BaseEntity {
@@ -17,8 +17,12 @@ export class Counter_person extends BaseEntity {
     @Column({ nullable: true })
     name!: string
 
-    @Column({ nullable: true })
-    counter_no!: string
+   // @Column({ nullable: true })
+    //counter_no!: string
+
+    @ManyToOne(() => Counter)
+    @JoinColumn({ name: "counter_no" })
+    counter_no!: string;
 
     setPassword = (password: string) =>{
         return (this.password = bcrypt.hashSync(password, 8));
@@ -28,14 +32,5 @@ export class Counter_person extends BaseEntity {
       return bcrypt.compareSync(password, this.password)
     }
 
-    generateJWT = () => {
-        return jwt.sign(
-            {
-                email: this.cp_email,
-            },
-            "SECRET",
-            {expiresIn: "1h"}
-        );
-    };
 
 }

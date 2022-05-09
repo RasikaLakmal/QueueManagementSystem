@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm"
-
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn } from "typeorm"
+import {User} from '../entity/User';
 @Entity()
 export class Issues extends BaseEntity {
 
@@ -9,19 +9,31 @@ export class Issues extends BaseEntity {
     @Column({ unique: true })
     issue_id!: string
 
-    @Column()
-    u_email!: string
+    //@Column({ nullable: true })
+    //u_email!: string
 
-    @Column()
+    @Column({ nullable: true })
     issue!: string
 
-    @Column()
-    name!: string
+   // @Column({ nullable: true })
+   // name!: string
 
-    @Column()
+    @Column({ nullable: true })
     email!: string
 
-    @Column()
-    phone_no!: number
+    //@Column({ nullable: true })
+    //phone_no!: number
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: "u_email" })
+    u_email!: string;
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: "name" })
+    name!: string;
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: "phone_no" })
+    phone_no!: string;
 
 }

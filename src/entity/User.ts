@@ -27,15 +27,7 @@ export class User extends BaseEntity {
       return bcrypt.compareSync(password, this.password)
     }
 
-    generateJWT = () => {
-        return jwt.sign(
-            {
-                email: this.u_email,
-            },
-            "SECRET",
-            {expiresIn: "1h"}
-        );
-    };
+   
 
 
 }

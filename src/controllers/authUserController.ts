@@ -1,7 +1,12 @@
 import {Request,Response} from 'express';
 import { BaseEntity ,getRepository} from 'typeorm';
 import {validate} from "class-validator";
+import * as bcrypt from "bcryptjs";
 import {User} from "../entity/User"
+import dotenv from 'dotenv';
+import jwt from "jsonwebtoken";
+
+dotenv.config();
 
 class authUserController extends BaseEntity {
     static register = async(req:Request,res:Response)=>{
@@ -28,28 +33,49 @@ class authUserController extends BaseEntity {
     
     };
 
-    static login= async (req:Request,res:Response) =>{
-        const {u_email,password} = req.body;
     
-        if (!(u_email && password)) {
-            res.status(400).send();
+
+    static login= async(req: Request, res: Response)=> {
+        const repository = getRepository(User);
+        const { u_email, password } = req.body;
+
+        const user = await repository.findOne({ where: {u_email:u_email }});
+
+        if(!user) {
+            return res.status(401).json({ message: "Unable to login"});
         }
-    
-        const userRepository = getRepository(User);
-        let user: User|any;
-        try{
-            user = await userRepository.findOne({where: { 
-                u_email: u_email 
-              } });
-            if(user && !user.isValidPassword(password)){
-                res.status(401).send("Incorrect Password");
-                return;
-            }
-            res.status(200).json({ access_token: user.generateJWT()});
-        }catch(error){
-            res.status(401).send(error);
+
+        const validPassword = await bcrypt.compare(password,user.password);
+
+
+    //   const validPassword =await repository.findOne({ where: {upassword:upassword }});
+
+        if(!u_email || !password) {
+            return res.status(400).json({ message: "Unable to create user" });
         }
-        };
+        
+
+        // if(user.upassword !== (upassword))
+        // {
+
+        if(!validPassword) {
+            return res.status(401).json({ message: "Unable to login"});
+        }
+
+        const token = jwt.sign({ 
+                id: user.id, 
+                u_email: user.u_email, 
+                password: user.password, 
+               // type: user.type
+            }, 
+                process.env.JWT_SECRET as string,
+                {
+                    expiresIn: process.env.JWT_EXPIRES_IN as string
+                }
+            );
+                
+        return res.json({user:user.id,u_email:user.u_email,token});
+    }
 
 }
 

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn } from "typeorm"
+import {Issues} from '../entity/Issues';
 
 @Entity()
 export class Counter extends BaseEntity {
@@ -12,7 +13,11 @@ export class Counter extends BaseEntity {
     @Column()
     calling_id!: string
 
-    @Column()
-    issue_id!: string
+   // @Column()
+   // issue_id!: string
+
+    @ManyToOne(() => Issues)
+    @JoinColumn({ name: "issue_id" })
+    issue_id!: string;
 
 }

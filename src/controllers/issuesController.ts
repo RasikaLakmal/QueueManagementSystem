@@ -5,8 +5,9 @@ import {Issues} from "../entity/Issues"
 class issuesController{
     static addIssue= async(req:Request,res:Response)=>{
         const newPost ={
-            u_email: req.body.u_email,
-            password: req.body.password,
+            issue_id: req.body.issue_id,
+            issue: req.body.issue,
+            email: req.body.email,
             name: req.body.name,
             phone_no: req.body.phone_no,
 
