@@ -20,9 +20,9 @@ export class Counter_person extends BaseEntity {
    // @Column({ nullable: true })
     //counter_no!: string
 
-    @ManyToOne(() => Counter)
+   /* @ManyToOne(() => Counter)
     @JoinColumn({ name: "counter_no" })
-    counter_no!: string;
+    counter_no!: string;*/
 
     setPassword = (password: string) =>{
         return (this.password = bcrypt.hashSync(password, 8));

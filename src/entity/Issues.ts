@@ -1,39 +1,54 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn,OneToOne } from "typeorm"
 import {User} from '../entity/User';
+import {Counter} from '../entity/Counter';
+
+export type UserRoleType = "waiting" | "inprogress" | "close"
+
 @Entity()
 export class Issues extends BaseEntity {
 
     @PrimaryGeneratedColumn()
-    id!: number
+    id: number
 
-    @Column({ unique: true })
-    issue_id!: string
+    @Column()
+    issue_id:string
 
-    //@Column({ nullable: true })
+    //@Column({ nullable: true }
     //u_email!: string
 
     @Column({ nullable: true })
-    issue!: string
+    issue: string
 
    // @Column({ nullable: true })
    // name!: string
 
     @Column({ nullable: true })
-    email!: string
+    email: string
 
     //@Column({ nullable: true })
     //phone_no!: number
 
     @ManyToOne(() => User)
     @JoinColumn({ name: "u_email" })
-    u_email!: string;
+    u_email: User;
 
     @ManyToOne(() => User)
     @JoinColumn({ name: "name" })
-    name!: string;
+    name: User;
+
+    @Column({
+        type: "enum",
+        enum: ["waiting", "inprogress", "close"],
+        default: "waiting"
+    })
+    status: UserRoleType[]
 
     @ManyToOne(() => User)
     @JoinColumn({ name: "phone_no" })
-    phone_no!: string;
+    phone_no: User;
+
+    @ManyToOne(() => Counter)
+    @JoinColumn()
+    counter_no: Counter;
 
 }

@@ -1,14 +1,14 @@
 import {Router} from 'express';
 import counterPController from '../controllers/counterPController';
-import  authMiddleware  from "../middleware/authMiddleware";
+import  authMiddleware  from "../middleware/authCMiddleware";
 
 const router = Router();
 
-router.post('/add',counterPController.addCP);
+//router.post('/add',counterPController.addCP);
 router.get('/all',authMiddleware,counterPController.getAllCPs);
-router.delete('/delete/:u_email',counterPController.deleteCPs);
-router.get('/:id',counterPController.getOneCP);
-router.put('/update/:id',counterPController.updateCPs);
+//router.delete('/delete/:u_email',authMiddleware,counterPController.deleteCPs);
+router.get('/get/:id',authMiddleware,counterPController.getOneCP);
+router.put('/update/:id',authMiddleware,counterPController.updateCPs);
 
 
 export default router;

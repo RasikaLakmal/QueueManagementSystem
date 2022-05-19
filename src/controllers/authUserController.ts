@@ -3,17 +3,19 @@ import { BaseEntity ,getRepository} from 'typeorm';
 import {validate} from "class-validator";
 import * as bcrypt from "bcryptjs";
 import {User} from "../entity/User"
-import dotenv from 'dotenv';
 import jwt from "jsonwebtoken";
+import { AppDataSource } from "../db";
 
-dotenv.config();
+
 
 class authUserController extends BaseEntity {
     static register = async(req:Request,res:Response)=>{
-        const {u_email,password} = req.body;
+        const {u_email,name,phone_no,password} = req.body;
         let user = new User();
     
         user.u_email = u_email;
+        user.name = name;
+        user.phone_no = phone_no;
         user.password = user.setPassword(password);
     
         const errors = await validate(user);
@@ -21,7 +23,7 @@ class authUserController extends BaseEntity {
             res.status(400).send(errors);
             return;
         }
-        const userRepository = getRepository(User);
+        const userRepository = AppDataSource.getRepository(User);
         try{ 
             await userRepository.save(user);
         }catch(e){
@@ -36,48 +38,43 @@ class authUserController extends BaseEntity {
     
 
     static login= async(req: Request, res: Response)=> {
-        const repository = getRepository(User);
-        const { u_email, password } = req.body;
+        const {u_email, password} = req.body;
 
-        const user = await repository.findOne({ where: {u_email:u_email }});
-
-        if(!user) {
-            return res.status(401).json({ message: "Unable to login"});
+        if (!(u_email && password)) {
+            res.status(400).send();
         }
 
-        const validPassword = await bcrypt.compare(password,user.password);
-
-
-    //   const validPassword =await repository.findOne({ where: {upassword:upassword }});
-
-        if(!u_email || !password) {
-            return res.status(400).json({ message: "Unable to create user" });
+        const userRepository = AppDataSource.getRepository( User);
+        let user: User|any;
+        try {
+            user = await userRepository.findOne({ where: {
+                u_email: u_email
+            } });
+            if (user && ! bcrypt.compareSync(password,user.password)) {
+                res.status(401).send('Incorrect Password');
+                return ;
+            }
+            const generatevJWT = () => {
+                return jwt.sign(
+                    {
+                        u_email: user.u_email,
+                        name: user.name,
+                        phone_no: user.phone_no,
+                    },
+                    "SECRET",
+                    {expiresIn: "1h"}
+                );
+            };
+           
+            res.status(200).json({ access_token: generatevJWT()});
+        } catch (error) {
+            res.status(401).send(error);
         }
-        
 
-        // if(user.upassword !== (upassword))
-        // {
 
-        if(!validPassword) {
-            return res.status(401).json({ message: "Unable to login"});
-        }
+    };
 
-        const token = jwt.sign({ 
-                id: user.id, 
-                u_email: user.u_email, 
-                password: user.password, 
-               // type: user.type
-            }, 
-                process.env.JWT_SECRET as string,
-                {
-                    expiresIn: process.env.JWT_EXPIRES_IN as string
-                }
-            );
-                
-        return res.json({user:user.id,u_email:user.u_email,token});
-    }
-
-}
+} 
 
 
 

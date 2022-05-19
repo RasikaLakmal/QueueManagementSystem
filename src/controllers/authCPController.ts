@@ -5,13 +5,15 @@ import {Counter_person} from "../entity/Counter_person"
 import * as bcrypt from "bcryptjs";
 import dotenv from 'dotenv';
 import jwt from "jsonwebtoken";
+import { AppDataSource } from "../db";
 
-class authUserController extends BaseEntity {
+class authCPController extends BaseEntity {
     static register = async(req:Request,res:Response)=>{
-        const {cp_email,password} = req.body;
+        const {cp_email,name,password} = req.body;
         let user = new Counter_person();
     
         user.cp_email = cp_email;
+        user.name = name;
         user.password = user.setPassword(password);
     
         const errors = await validate(user);
@@ -19,7 +21,7 @@ class authUserController extends BaseEntity {
             res.status(400).send(errors);
             return;
         }
-        const userRepository = getRepository(Counter_person);
+        const userRepository = AppDataSource.getRepository(Counter_person);
         try{ 
             await userRepository.save(user);
         }catch(e){
@@ -32,49 +34,44 @@ class authUserController extends BaseEntity {
     };
 
     static login= async(req: Request, res: Response)=> {
-        const repository = getRepository(Counter_person);
-        const { cp_email, password } = req.body;
+        const {cp_email, password} = req.body;
 
-        const user = await repository.findOne({ where: {cp_email:cp_email }});
-
-        if(!user) {
-            return res.status(401).json({ message: "Unable to login"});
+        if (!(cp_email && password)) {
+            res.status(400).send();
         }
 
-        const validPassword = await bcrypt.compare(password,user.password);
-
-
-    //   const validPassword =await repository.findOne({ where: {upassword:upassword }});
-
-        if(!cp_email || !password) {
-            return res.status(400).json({ message: "Unable to create user" });
+        const userRepository = AppDataSource.getRepository( Counter_person);
+        let cuser: Counter_person|any;
+        try {
+            cuser = await userRepository.findOne({ where: {
+                cp_email: cp_email
+            } });
+            if (cuser && ! bcrypt.compareSync(password,cuser.password)) {
+                res.status(401).send('Incorrect Password');
+                return ;
+            }
+            const generateJWT = () => {
+                return jwt.sign(
+                    {
+                        cp_email: cuser.cp_email,
+                        name: cuser.name,
+                    },
+                    "SECRET",
+                    {expiresIn: "1h"}
+                );
+            };
+           
+            res.status(200).json({ access_token: generateJWT()});
+        } catch (error) {
+            res.status(401).send(error);
         }
-        
 
-        // if(user.upassword !== (upassword))
-        // {
+       
 
-        if(!validPassword) {
-            return res.status(401).json({ message: "Unable to login"});
-        }
-
-        const token = jwt.sign({ 
-                id: user.id, 
-                cp_email: user.cp_email, 
-                password: user.password, 
-               // type: user.type
-            }, 
-                process.env.JWT_SECRET as string,
-                {
-                    expiresIn: process.env.JWT_EXPIRES_IN as string
-                }
-            );
-                
-        return res.json({user:user.id,cp_email:user.cp_email,token});
-    }
+    };
 
 }
 
 
 
-export default authUserController;
+export default authCPController;
