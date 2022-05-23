@@ -1,23 +1,29 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,CreateDateColumn,UpdateDateColumn } from "typeorm";
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 @Entity()
 export class User extends BaseEntity {
 
     @PrimaryGeneratedColumn()
-    id!: number;
+    id: number;
 
     @Column({ unique: true })
-    u_email!: string
+    u_email: string
 
     @Column()
-    password!: string
+    password: string
 
     @Column({ nullable: true })
-    name!: string
+    name: string
 
     @Column({ nullable: true })
-    phone_no!: number;
+    phone_no: number;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updateAt: Date;
 
     setPassword = (password: string) =>{
         return (this.password = bcrypt.hashSync(password, 8));

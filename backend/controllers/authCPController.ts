@@ -2,8 +2,8 @@ import {Request,Response} from 'express';
 import { BaseEntity ,getRepository} from 'typeorm';
 import {validate} from "class-validator";
 import {Counter_person} from "../entity/Counter_person"
+import {Counter} from "../entity/Counter"
 import * as bcrypt from "bcryptjs";
-import dotenv from 'dotenv';
 import jwt from "jsonwebtoken";
 import { AppDataSource } from "../db";
 
@@ -21,9 +21,16 @@ class authCPController extends BaseEntity {
             res.status(400).send(errors);
             return;
         }
-        const userRepository = AppDataSource.getRepository(Counter_person);
+        //const userRepository = AppDataSource.getRepository(Counter_person);
         try{ 
-            await userRepository.save(user);
+           // await userRepository.save(user);
+           await AppDataSource
+           .createQueryBuilder()
+           .insert()
+           .into(Counter_person)
+           .values([user])
+           .execute()
+
         }catch(e){
             res.status(409).send("CPUser Already exists");
             return;
@@ -40,12 +47,43 @@ class authCPController extends BaseEntity {
             res.status(400).send();
         }
 
-        const userRepository = AppDataSource.getRepository( Counter_person);
-        let cuser: Counter_person|any;
+        //const userRepository = AppDataSource.getRepository( Counter_person);
+        
         try {
-            cuser = await userRepository.findOne({ where: {
-                cp_email: cp_email
-            } });
+            let cuser: Counter_person|any;
+            let count: Counter|any;
+            cuser = await AppDataSource
+            .getRepository(Counter_person)
+            .createQueryBuilder("cuser")
+            .where("cuser.cp_email=:cp_email",{cp_email:cp_email})
+            .getOne()
+
+            count = await AppDataSource
+                .createQueryBuilder()
+                .select('count')
+                .from(Counter,'count')
+                .where('count.counter_person = :counter_person', {counter_person: Number(cuser.id)})
+                .update(Counter)
+                .set({ counter_person: cuser.id })
+                .where({ status: ['close']})
+                .orderBy('updateAt', "DESC")
+                .execute()
+                
+                count = await AppDataSource
+                .createQueryBuilder()
+                .select('count')
+                .from(Counter,'count')
+                .where('count.counter_person = :counter_person', {counter_person: Number(cuser.id)})
+                .getOne()
+
+                await AppDataSource
+                .createQueryBuilder()
+                .update(Counter)
+                .set({ status: ['active'] })
+                .where("id = :id", { id:count.id })
+                .execute()
+
+            
             if (cuser && ! bcrypt.compareSync(password,cuser.password)) {
                 res.status(401).send('Incorrect Password');
                 return ;
@@ -55,6 +93,8 @@ class authCPController extends BaseEntity {
                     {
                         cp_email: cuser.cp_email,
                         name: cuser.name,
+                        counter_number: count.counter_number,
+                        counter_id: count.id
                     },
                     "SECRET",
                     {expiresIn: "1h"}

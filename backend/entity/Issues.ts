@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn,OneToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn,OneToOne,CreateDateColumn,UpdateDateColumn } from "typeorm"
 import {User} from '../entity/User';
 import {Counter} from '../entity/Counter';
 
@@ -11,7 +11,7 @@ export class Issues extends BaseEntity {
     id: number
 
     @Column()
-    issue_id:string
+    issue_id:number
 
     //@Column({ nullable: true }
     //u_email!: string
@@ -32,9 +32,8 @@ export class Issues extends BaseEntity {
     @JoinColumn({ name: "u_email" })
     u_email: User;
 
-    @ManyToOne(() => User)
-    @JoinColumn({ name: "name" })
-    name: User;
+    @Column({ nullable: true })
+    name: string;
 
     @Column({
         type: "enum",
@@ -43,12 +42,17 @@ export class Issues extends BaseEntity {
     })
     status: UserRoleType[]
 
-    @ManyToOne(() => User)
-    @JoinColumn({ name: "phone_no" })
-    phone_no: User;
+    @Column({ nullable: true })
+    phone_no: number;
 
     @ManyToOne(() => Counter)
     @JoinColumn()
     counter_no: Counter;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updateAt: Date;
 
 }

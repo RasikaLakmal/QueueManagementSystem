@@ -23,9 +23,15 @@ class authUserController extends BaseEntity {
             res.status(400).send(errors);
             return;
         }
-        const userRepository = AppDataSource.getRepository(User);
+        //const userRepository = AppDataSource.getRepository(User);
         try{ 
-            await userRepository.save(user);
+            //await userRepository.save(user);
+            await AppDataSource
+            .createQueryBuilder()
+            .insert()
+            .into(User)
+            .values([user])
+            .execute()
         }catch(e){
             res.status(409).send("User Already exists");
             return;
@@ -44,22 +50,27 @@ class authUserController extends BaseEntity {
             res.status(400).send();
         }
 
-        const userRepository = AppDataSource.getRepository( User);
-        let user: User|any;
+        
+        
         try {
-            user = await userRepository.findOne({ where: {
-                u_email: u_email
-            } });
-            if (user && ! bcrypt.compareSync(password,user.password)) {
+            let userl: User|any;
+             userl = await AppDataSource
+             .getRepository( User)
+             .createQueryBuilder("userl")
+             .where("userl.u_email = :u_email",{u_email:u_email})
+             .getOne()
+           
+            
+            if (userl && ! bcrypt.compareSync(password,userl.password)) {
                 res.status(401).send('Incorrect Password');
                 return ;
             }
             const generatevJWT = () => {
                 return jwt.sign(
                     {
-                        u_email: user.u_email,
-                        name: user.name,
-                        phone_no: user.phone_no,
+                        u_email: userl.u_email,
+                        name: userl.name,
+                        phone_no: userl.phone_no,
                     },
                     "SECRET",
                     {expiresIn: "1h"}

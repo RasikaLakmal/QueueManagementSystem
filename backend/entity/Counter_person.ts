@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn  } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn ,CreateDateColumn,UpdateDateColumn } from "typeorm"
 import * as bcrypt from "bcryptjs";
 import {Counter} from '../entity/Counter';
 
@@ -6,16 +6,22 @@ import {Counter} from '../entity/Counter';
 export class Counter_person extends BaseEntity {
 
     @PrimaryGeneratedColumn()
-    id!: number;
+    id: number;
 
     @Column({ unique: true })
-    cp_email!: string
+    cp_email: string
 
     @Column()
-    password!: string
+    password: string
 
     @Column({ nullable: true })
-    name!: string
+    name: string
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updateAt: Date;
 
    // @Column({ nullable: true })
     //counter_no!: string

@@ -1,5 +1,4 @@
 import {Request,Response} from "express";
-import { getRepository } from "typeorm";
 import {Issues} from "../entity/Issues"
 import {Counter} from "../entity/Counter"
 import { AppDataSource } from "../db";
@@ -9,24 +8,22 @@ class counterController{
         //const {counter_no} = req.body;
         //const queue = []
         
-        const issue = await AppDataSource.getRepository( Issues)
+        const issue = await AppDataSource
+        .getRepository(Issues)
         .createQueryBuilder('issue')
         .select('issue.counter_no')
         .addSelect('COUNT(issue.issue_id)', 'issues')
         .groupBy('issue.counter_no')
         .execute();
-        console.log(issue)
+        //console.log(issue)
 
-        
-        
-        
-
-        const count = await AppDataSource.getRepository( Counter)
+        const count = await AppDataSource
+        .getRepository( Counter)
         .createQueryBuilder('count')
-        .select('counter_id')
+        .select('id')
         .where({ status: ['active']})
         .execute();
-        console.log(count)
+        //console.log(count)
 
         var lenCount = Object.keys(count).length;
         var lenIssue = Object.keys(issue).length;
@@ -35,56 +32,44 @@ class counterController{
             res.status(401).send('all counters are close');
         } 
         else {
+            if(lenIssue == 0 || lenCount > lenIssue){
 
-            let array:number[] = [];
+                let activeCount : Counter|any;
+                activeCount = await AppDataSource
+                    .createQueryBuilder()
+                    .select('activeCount.id')
+                    .from(Counter, 'activeCount')
+                    .where({ status: ['active']})
+                    .orderBy('updateAt', "DESC")
+                    .getOne()
+
+                    return res.send('Available Suitable counter no : '+activeCount.id +','+' No issues added yet');
+            } 
+            else{let array:number[] = [];
 
             for (let index = 0; index < lenCount; index++) {
                 array.push(Number(Object.values(count[index])))
             }
 
-             let minValue: Number = 999999;
+            let minValue: Number = 999999;
             let minCount: Number = 999999;
 
             for (let index = 0; index< lenIssue; index++) {
-                if (array.includes(issue[index].counterNoCounterId)) {
+                if (array.includes(issue[index].counterNoId)) {
                     if (minValue > issue[index].issues ) {
                         minValue = issue[index].issues ;
-                        minCount = issue[index].counterNoCounterId ;
+                        minCount = issue[index].counterNoId ;
                     }
                 }
             }
             res.locals.minValue = minValue;
             res.locals.minCount = minCount;
+        
 
-            return res.send(minCount +','+ minValue );
+            return res.send('Available Suitable counter no:'+minCount +', previous issue id:'+ minValue );
+        }
 
         }
-    
-       /* if({where:{counter_no 1 | 10}}){  
-            console.log("TypeScript Statement 1");  
-            }  
-            else if(num==2){  
-            console.log("TypeScript Statement 2");  
-            }  
-            else if(num==3){  
-            console.log("TypeScript Statement 3");  
-            }  
-        const post = getRepository(Issues).create(newPost);
-        const a = getRepository(Counter).create(req.body.issue_id);
-        const v = await getRepository(Counter).save(a);
-        const result = await getRepository(Issues).save(post);
-        return res.json(result);*/
-    
-    // issues table ekata query ekak gahanna counter id eken group karala max isse_no eka pick karanna.
-
-    // ex : counter_id 1 | 10
-    //      counter_id 2 | 12
-    //      counter_id 3 | 20
-
-
-    // aduma max number eka thyena counter _id eka pick kara
-
-    //return karanna counter_id eka
         }
 
     static getAllCounterData = async (req:Request,res:Response) => {

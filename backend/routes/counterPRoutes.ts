@@ -10,5 +10,7 @@ router.get('/all',authMiddleware,counterPController.getAllCPs);
 router.get('/get/:id',authMiddleware,counterPController.getOneCP);
 router.put('/update/:id',authMiddleware,counterPController.updateCPs);
 
+router.get('/call',counterPController.getAllCPs);
+
 
 export default router;

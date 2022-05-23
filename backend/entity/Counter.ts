@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn,OneToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity,ManyToOne,JoinColumn,OneToOne,CreateDateColumn,UpdateDateColumn } from "typeorm"
 import {Issues} from '../entity/Issues';
 import {Counter_person} from '../entity/Counter_person';
 
@@ -8,28 +8,34 @@ export type UserRoleType =  "active" | "close"
 export class Counter extends BaseEntity {
 
     @PrimaryGeneratedColumn()
-    counter_id!: number
+    id: number
 
     @Column()
-    counter_no!: string
+    counter_no: number
 
     @Column()
-    calling_id!: string
+    calling_id: string
 
    // @Column()
    // issue_id!: string
 
    @ManyToOne(() => Counter_person)
    @JoinColumn()
-   counter_person!: Counter_person;
+   counter_person: Counter_person;
 
    @Column({
        type: "enum",
        enum: ["active", "close" ],
    })
-   status!: UserRoleType[]
+   status: UserRoleType[]
 
     @Column()
-    issue_idx!: string;
+    issue_idx: string;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updateAt: Date;
 
 }
