@@ -2,11 +2,14 @@ import {Request,Response} from "express";
 import {Issues} from "../entity/Issues"
 import {Counter} from "../entity/Counter"
 import { AppDataSource } from "../db";
+import {queueNumDto} from "../dto/queueNumDto"
+import {getOneIssuesDto} from "../dto/getOneIssueDto"
+import {Brackets } from "typeorm";
 
 class counterController{
+
+    //get next available issue no and suitable counter
     static getCounter= async(req:Request,res:Response)=>{
-        //const {counter_no} = req.body;
-        //const queue = []
         
         const issue = await AppDataSource
         .getRepository(Issues)
@@ -72,6 +75,8 @@ class counterController{
         }
         }
 
+        //get all counter details
+
     static getAllCounterData = async (req:Request,res:Response) => {
 
         const result = await AppDataSource.getRepository(Issues).find();
@@ -88,23 +93,180 @@ class counterController{
     
     }
 
-    /*static getOneIssue = async(req:Request,res:Response)=>{
-        const issue_id = req.params.issue_id;
-        const user = await getRepository(Issues).findOne({where:{id: parseInt(req.params.id, 10)}});
-        return res.json(user);
-    }
+    //close counter function
 
-    static updateIssues = async (req:Request,res:Response) => {
-        //const {id:any} = req.params;
-      const user = await getRepository(Issues).findOne({where:{id: parseInt(req.params.id, 10)}});
-      if(user){
-          getRepository(Issues).merge(user,req.body);
-          const result = await getRepository(Issues).save(user);
-          return res.json(result);
-      }
-      return res.json({msg: "Post Not Found"})
+    static closeCounter = async (req:Request,res:Response) => {
+
+        await AppDataSource
+                .createQueryBuilder()
+                .update(Counter)
+                .set({ status: ['close'] })
+                .where("id = :id", { id:res.locals.jwt.counter_id })
+                .execute()
+        
+        res.json({
+            message: 'done'
+        })
+
+    };
+//done and next 
+static doneNNext = async (req:Request,res:Response) => {
+
+    const {id} = req.params;
+    await AppDataSource
+        .createQueryBuilder()
+        .update(Issues)
+        .set({ status:  ["close"]})
+        .where("id = :id", { id: id })
+        .execute()
     
-    };*/
+    const oneUser = await AppDataSource
+        .createQueryBuilder()
+        .select("oneUser")
+        .from(Issues, "oneUser")
+        .where('oneUser.counter_no = :counter_no', {counter_no:res.locals.jwt.counter_id })
+        .andWhere(
+            new Brackets((qb) => {
+                qb.where("oneUser.status = :status", { status: "inprogress",})
+                qb.orWhere("oneUser.status = :status1", { status1: "waiting"  })
+            }),)
+        .orderBy({ "status": 'DESC'})
+        .getOne(); 
+    console.log(oneUser)
+
+    await AppDataSource
+        .createQueryBuilder()
+        .update(Issues)
+        .set({ status:  ["inprogress"]})
+        .where("id = :id", { id: oneUser?.id })
+        .execute()
+
+    const oneUserInp = await AppDataSource
+        .createQueryBuilder()
+        .select("oneUserInp.counterNoId")
+        .from(Issues, "oneUserInp")
+        .where("id = :id", { id :oneUser?.id})
+        .execute();
+
+    const oneUserInp2 = await AppDataSource
+        .createQueryBuilder()
+        .select("oneUserInp2.issue_id")
+        .from(Issues, "oneUserInp2")
+        .where("id = :id", { id :oneUser?.id})
+        .execute();
+
+    let valCid = Number(Object.values(oneUserInp[0])) 
+    let valIno = Number(Object.values(oneUserInp2[0]))    
+    
+    await AppDataSource
+        .createQueryBuilder()
+        .update(Counter)
+        .set({ ongoing:valIno})
+        .where("counter_no = :counter_no", { counter_no:valCid })
+        .execute()
+
+        let responseData : Array<getOneIssuesDto> = new Array();
+
+        responseData.push(new getOneIssuesDto({
+            oneUser_id:oneUser?.id,
+            oneUser_name:oneUser?.name,
+            oneUser_issue_id:oneUser?.issue_id,
+            oneUser_phone_no:oneUser?.phone_no,
+            oneUser_issue:oneUser?.issue
+            
+        }))
+        
+        console.log(responseData)
+        return res.send(responseData);
+    
+    
+};
+
+
+//doneissue
+
+static doneIssue = async (req:Request,res:Response) => {
+
+   await AppDataSource
+                .createQueryBuilder()
+                
+                
+                .update(Issues)
+                .set({ status: ['close']})
+                .where({ status: ['inprogress']})
+                .andWhere("counter_no = :counter_no", { counter_no:res.locals.jwt.counter_id })
+                .execute()
+
+               
+}
+
+    //get queue no of user
+
+    static queueNum = async (req:Request,res:Response) => {
+
+    //     let inprog: Issues|any;
+
+    //    inprog= await AppDataSource
+    // .createQueryBuilder()
+    // .update(Issues)
+    // .set({ status: ['inprogress'] })
+    // .where("id = :id", { id: 1 })
+    // .execute();
+
+
+
+
+
+
+
+        let issuCid : Issues|any;
+        issuCid = await AppDataSource
+            .createQueryBuilder()
+            .select('issuCid.counterNoId')
+            .from(Issues,'issuCid')
+            .where('issuCid.email = :email', {email: res.locals.jwt.u_email })
+            .andWhere("issuCid.status = :status OR issuCid.status = :status1",{ status: "inprogress", status1: "waiting" })
+            .execute()
+
+        let issueIno : Issues|any;
+        issueIno = await AppDataSource
+            .createQueryBuilder()
+            .select('issueIno.issue_id')
+            .from(Issues,'issueIno')
+            .where('issueIno.email = :email', {email: res.locals.jwt.u_email })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where("issueIno.status = :status", { status: "inprogress",})
+                    qb.orWhere("issueIno.status = :status1", { status1: "waiting"  })
+                }),)
+            .execute()
+        console.log(issueIno)
+        let valIssuCid = Number(Object.values(issuCid[0]))
+        let valIssueIno = Number(Object.values(issueIno[0]))
+
+
+        let counter : Counter|any;
+        counter = await AppDataSource
+            .createQueryBuilder()
+            .select('counter.ongoing')
+            .from(Counter,'counter')
+            .where('counter.id = :id', {id:valIssuCid})
+            .execute()
+
+        let valCounter = Number(Object.values(counter[0]))
+
+        let responseData : Array<queueNumDto> = new Array();
+
+        responseData.push(new queueNumDto({
+            counterNoId:valIssuCid,
+                issue_id: valIssueIno,
+                ongoing: valCounter
+            }));
+    
+        
+        return res.send(responseData);
+    };
+
 }
 export default counterController;
 

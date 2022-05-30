@@ -4,15 +4,13 @@ import authCPController from '../controllers/authCPController'
 
 const router = Router();
 
+//auth user
 router.post('/user/login',authUserController.login);
 router.post('/user/register',authUserController.register);
-//router.get('/all',authController.getAllUsers);
-//router.delete('/delete/:u_email',authController.deleteUsers);
 
 
 
-
-
+//auth counter person
 router.post('/cp/login',authCPController.login);
 router.post('/cp/register',authCPController.register);
 

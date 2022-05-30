@@ -1,7 +1,8 @@
 import {Request,Response} from "express";
-import { getRepository } from "typeorm";
 import {User} from "../entity/User"
+import {Issues} from "../entity/Issues"
 import { AppDataSource } from "../db";
+import {Brackets } from "typeorm";
 
 class userController{
     /*static addUser= async(req:Request,res:Response)=>{
@@ -34,6 +35,32 @@ class userController{
         res.send('del')
     
     }
+
+    static userCheck  = async (req:Request,res:Response) => {
+
+        const {email} = req.params;
+        let issueE : Issues|any;
+        issueE = await AppDataSource
+            .createQueryBuilder()
+            .select('issueE')
+            .from(Issues,'issueE')
+            .where('issueE.email = :email', {email: email })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where("issueE.status = :status", { status: "inprogress",})
+                    qb.orWhere("issueE.status = :status1", { status1: "waiting"  })
+                }),)
+            .execute()
+
+            var lenIssueEX = Object.keys(issueE).length;
+            if (lenIssueEX != 0) {
+                console.log("true")
+                return res.send('true')
+            } else {
+                console.log("false")
+                return res.send('false')
+            }
+    };
 
     static getOneUser = async(req:Request,res:Response)=>{
         //const id = req.params.id;

@@ -1,5 +1,5 @@
 import {Request,Response} from 'express';
-import { BaseEntity ,getRepository} from 'typeorm';
+import { BaseEntity} from 'typeorm';
 import {validate} from "class-validator";
 import {Counter_person} from "../entity/Counter_person"
 import {Counter} from "../entity/Counter"
@@ -8,12 +8,15 @@ import jwt from "jsonwebtoken";
 import { AppDataSource } from "../db";
 
 class authCPController extends BaseEntity {
+
+    //Counter person register
     static register = async(req:Request,res:Response)=>{
-        const {cp_email,name,password} = req.body;
+        const {cp_email,name,phone_no,password} = req.body;
         let user = new Counter_person();
     
         user.cp_email = cp_email;
         user.name = name;
+        user.phone_no = phone_no;
         user.password = user.setPassword(password);
     
         const errors = await validate(user);
@@ -40,14 +43,14 @@ class authCPController extends BaseEntity {
     
     };
 
+    //counter person login
+
     static login= async(req: Request, res: Response)=> {
         const {cp_email, password} = req.body;
 
         if (!(cp_email && password)) {
             res.status(400).send();
         }
-
-        //const userRepository = AppDataSource.getRepository( Counter_person);
         
         try {
             let cuser: Counter_person|any;
@@ -93,6 +96,7 @@ class authCPController extends BaseEntity {
                     {
                         cp_email: cuser.cp_email,
                         name: cuser.name,
+                        phone_no: cuser.phone_no,
                         counter_number: count.counter_number,
                         counter_id: count.id
                     },
@@ -101,7 +105,7 @@ class authCPController extends BaseEntity {
                 );
             };
            
-            res.status(200).json({ access_token: generateJWT()});
+            res.status(200).json({ token: generateJWT()});
         } catch (error) {
             res.status(401).send(error);
         }
@@ -111,7 +115,4 @@ class authCPController extends BaseEntity {
     };
 
 }
-
-
-
 export default authCPController;

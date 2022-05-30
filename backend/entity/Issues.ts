@@ -28,9 +28,9 @@ export class Issues extends BaseEntity {
     //@Column({ nullable: true })
     //phone_no!: number
 
-    @ManyToOne(() => User)
-    @JoinColumn({ name: "u_email" })
-    u_email: User;
+    // @ManyToOne(() => User)
+    // @JoinColumn({ name: "u_email" })
+    // u_email: User;
 
     @Column({ nullable: true })
     name: string;

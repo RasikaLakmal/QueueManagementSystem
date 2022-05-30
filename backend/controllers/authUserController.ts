@@ -1,5 +1,5 @@
 import {Request,Response} from 'express';
-import { BaseEntity ,getRepository} from 'typeorm';
+import { BaseEntity} from 'typeorm';
 import {validate} from "class-validator";
 import * as bcrypt from "bcryptjs";
 import {User} from "../entity/User"
@@ -9,6 +9,8 @@ import { AppDataSource } from "../db";
 
 
 class authUserController extends BaseEntity {
+
+    //user register
     static register = async(req:Request,res:Response)=>{
         const {u_email,name,phone_no,password} = req.body;
         let user = new User();
@@ -41,7 +43,7 @@ class authUserController extends BaseEntity {
     
     };
 
-    
+    //user login
 
     static login= async(req: Request, res: Response)=> {
         const {u_email, password} = req.body;
@@ -50,8 +52,6 @@ class authUserController extends BaseEntity {
             res.status(400).send();
         }
 
-        
-        
         try {
             let userl: User|any;
              userl = await AppDataSource
@@ -77,7 +77,7 @@ class authUserController extends BaseEntity {
                 );
             };
            
-            res.status(200).json({ access_token: generatevJWT()});
+            res.status(200).json({ token: generatevJWT()});
         } catch (error) {
             res.status(401).send(error);
         }
@@ -86,8 +86,4 @@ class authUserController extends BaseEntity {
     };
 
 } 
-
-
-
-
 export default authUserController;

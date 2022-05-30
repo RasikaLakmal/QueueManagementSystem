@@ -10,7 +10,10 @@ export class Notifications extends BaseEntity {
     message: string
 
     @Column()
-    calling_id: string
+    issue_id: number
+
+    @Column()
+    counter_no: number
 
     @CreateDateColumn()
     createdAt: Date;

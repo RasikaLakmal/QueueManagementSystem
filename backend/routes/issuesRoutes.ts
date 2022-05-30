@@ -2,14 +2,13 @@ import {Router} from 'express';
 import issuesController from '../controllers/issuesController';
 import counterController from '../controllers/CounterController';
 import  authMiddleware  from "../middleware/authMiddleware";
+import  authCMiddleware  from "../middleware/authCMiddleware";
 
 const router = Router();
 
 router.post('/add',authMiddleware,issuesController.addIssue);
-router.get('/all',authMiddleware,issuesController.getAllIssues);
-//router.delete('/delete/:u_email',issuesController.deleteIssues);
-router.get('get/:issue_id',issuesController.getOneIssue);
-//router.put('/update/:issue_id',authMiddleware,issuesController.updateIssues);
+router.get('/all',authCMiddleware,issuesController.getAllIssues);
+router.get('/get/:id',authCMiddleware,issuesController.getOneIssues);
 
 
 router.get('/c',counterController.getCounter);

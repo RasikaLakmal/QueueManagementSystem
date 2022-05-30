@@ -17,6 +17,9 @@ export class Counter_person extends BaseEntity {
     @Column({ nullable: true })
     name: string
 
+    @Column({ nullable: true })
+    phone_no: number;
+
     @CreateDateColumn()
     createdAt: Date;
 

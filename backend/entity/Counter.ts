@@ -13,8 +13,8 @@ export class Counter extends BaseEntity {
     @Column()
     counter_no: number
 
-    @Column()
-    calling_id: string
+    @Column({nullable: true})
+    ongoing: number
 
    // @Column()
    // issue_id!: string
@@ -28,9 +28,6 @@ export class Counter extends BaseEntity {
        enum: ["active", "close" ],
    })
    status: UserRoleType[]
-
-    @Column()
-    issue_idx: string;
 
     @CreateDateColumn()
     createdAt: Date;
