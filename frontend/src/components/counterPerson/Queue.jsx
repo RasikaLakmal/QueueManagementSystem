@@ -11,11 +11,11 @@ function Queue() {
   const [requestError,setRequestError]= useState()
   const navigate = useNavigate()
 
-  const Token = localStorage.getItem('jsonwebtoken')
+  const counterToken = localStorage.getItem('jsonwebtoken')
 
   axios.interceptors.request.use(
     config  => {
-        config.headers.authorization =`Bearer ${Token}`;
+        config.headers.authorization =`Bearer ${counterToken}`;
         console.log(config)
         return config;
     },
@@ -36,22 +36,10 @@ function Queue() {
       setRequestError(err)
     })
   },[])
-
- 
-  
-
-  const handleClose =()=>
-  {
-    
-    navigate("http://localhost:3001/api/cp/counter/close"
-     
-    );
-
-  }
   return (
     <div>
           <CNavbar/>
-<br/><Row><Col md={{  offset: 10 }}><Button onClick={posts1} variant="danger" >Close Counter</Button></Col></Row>
+<br/><Row><Col md={{  offset: 10 }}><Button variant="danger" >Close Counter</Button></Col></Row>
            {posts.map(posts=>(
 
 
@@ -60,11 +48,15 @@ function Queue() {
                     <Col sm={{ span:8, offset: 1}} >
                     <Card border="primary" style={{ width: '109%' }}>
     <div class="card-header"><h1 style={{textAlign: "Left", color: "red"}}>{posts.issue_id}</h1><p style={{textAlign: "Center",fontSize: "25px"}}>{posts.name} : {posts.phone_no}</p></div>
-    <Row><Col md={{  offset: 10 }}>
-{<Link to={`/vis/${posts.id}`}><Button variant="warning"  >Call</Button></Link>}</Col></Row>
+    <Row><Col md={{  offset: 10 }}>{<Button onClick={()=>{navigate('/vis/${posts.id}',{state:{id:posts.id}});}}>
+                        
+                          
+                            
+                        Call</Button>}
+   </Col></Row>
   </Card>
   <br />
-                     
+  
                     </Col>
                 </Form.Group>
             </div>

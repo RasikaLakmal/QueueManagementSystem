@@ -24,7 +24,7 @@ function App() {
           <Route path="/ulog" element= {<UserLogin/>} />
           <Route path="/cplog" element= {<CpLogin/>} />
           <Route path="/cpreg" element= {<CpRegister/>} />
-          <Route path="/vis" element= {<ViewIssue/>} />
+          <Route path="/vis/:id" element= {<ViewIssue/>} />
           <Route path="/ais" element= {<AddIssues/>} />
           <Route path="/qn" element= {<QueueNum/>} />
           <Route path="/q" element= {<Queue/>} />

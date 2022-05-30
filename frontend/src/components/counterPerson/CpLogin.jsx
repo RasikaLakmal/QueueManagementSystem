@@ -29,7 +29,7 @@ function CpLogin(){
     }   
     ).then(response=>{
         setLoading(false);
-        localStorage.setItem('jsonwebtoken',response.data.access_token)
+        localStorage.setItem('jsonwebtoken',response.data.token)
         const counterToken= localStorage.getItem('jsonwebtoken')
         console.log("counterToken", counterToken)
         navigater('/q')

@@ -13,11 +13,11 @@ function QueueNum() {
     const [posts,setposts] =useState([])
   const [requestError,setRequestError]= useState()
 
-  const counterToken = localStorage.getItem('counterJWT')
+  const userToken = localStorage.getItem('jsonwebtoken')
 
   axios.interceptors.request.use(
     config  => {
-        config.headers.authorization =`Bearer ${counterToken}`;
+        config.headers.authorization =`Bearer ${userToken}`;
         console.log(config)
         return config;
     },

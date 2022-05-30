@@ -6,18 +6,19 @@ import axios from "axios";
 
 function ViewIssue() {
 
-  const params = useLocation();
+  const location = useLocation();
     const [post,setpost] =useState({})
      const [requestError,setRequestError]= useState()
      const navigate = useNavigate()
     
   
-    const counterToken = localStorage.getItem('counterJWT')
+    const counterToken = localStorage.getItem('jsonwebtoken')
   
     axios.interceptors.request.use(
       config  => {
           config.headers.authorization =`Bearer ${counterToken}`;
           console.log(config)
+          
           return config;
       },
       error =>{
@@ -26,20 +27,21 @@ function ViewIssue() {
     )
   
     useEffect(()=>{
-      axios.get(`http://localhost:3001/api/issue/get/${params.state.page}`)
-        .then(respose=>{
-          console.log(respose)
-          setpost(respose.data)
-        }).catch(err=>{
-          console.log(err)
-        })
-        },[params.state.page])
+      axios.get(`http://localhost:3001/api/issue/get/${location.state.id}`)
+      .then(respose=>{
+        console.log(respose)
+        setpost(respose.data)
+      }).catch(err=>{
+        console.log(err)
+      })
+      },[])
+      
         
         return (
             <div><CNavbar/>
               <div class="card" style={{width: "75%",marginTop:"5%",marginLeft:"15%",backgroundColor:"#white"}} >
               
-            <div class="card-body">
+              
             <div>
                   <br/>
                   <h1 style={{textAlign: "left"}} > Counter </h1>
@@ -50,15 +52,13 @@ function ViewIssue() {
                  Counter: Counter_no</Row> 
                  <Row><div class="card" style={{width: "98%",marginTop:"5%",marginLeft:"1%",backgroundColor:"#white"}} >
     <div  style={{width: "90%",marginBottom:"0%",marginLeft:"1%",backgroundColor:"#white"}}>
-        <h3 style={{textAlign: "Left", color: "red"}}>25</h3>
-        <p style={{textAlign: "Left"}}>{post.name}
-    phone_no</p></div>
+        <h3 style={{textAlign: "Left", color: "red"}}>{post.issue_id}</h3>
+        <p style={{textAlign: "Left"}}>{location.state.name}
+    {post.phone_no}</p></div>
     <Card.Body>
       <Card.Title style={{textAlign: "Left"}}>Issue</Card.Title>
       <Card.Text style={{textAlign: "Left"}}>
-        With supporting text below as a natural lead-in to additional content.tgfffnhb;l
-        
-        jhbgbfgbm ;. m.vbm .,m.,/mbhh;tjrGtrghthbtrfbhrfbhghynb hyn
+      {post.issue}
       </Card.Text>
      
     </Card.Body>
@@ -68,7 +68,7 @@ function ViewIssue() {
   
   
             </div>
-            </div></div></div>
+              </div></div>
           )
         }
       export default ViewIssue
