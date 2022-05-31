@@ -1,7 +1,7 @@
 import React, { useEffect ,useState} from 'react'
 import Navbar from 'react-bootstrap/Navbar'
 import { Container, Nav } from "react-bootstrap";
-import {Link,useNavigate} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import { BsPersonCircle } from "react-icons/bs";
 import axios from "axios";
 
@@ -11,7 +11,6 @@ function CNavbar() {
     const [requestError,setRequestError]= useState()
     const [error,setError]=useState(null);
     const [loading,setLoading]=useState(false);
-    const navigate = useNavigate()
   
     const counterToken = localStorage.getItem('jsonwebtoken')
   

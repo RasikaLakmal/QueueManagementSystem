@@ -49,7 +49,10 @@ async function main(){
           io.on("connection",(socket)=> {
              console.log('user connected:' +socket.id);
          
-            
+             socket.on('send_Message',(data) => {
+               console.log(data)
+               socket.broadcast.emit('receive_message',data)
+           })
 
            socket.on('refreshData', function(x) {
             // Your refresh data logic here (from second controller)

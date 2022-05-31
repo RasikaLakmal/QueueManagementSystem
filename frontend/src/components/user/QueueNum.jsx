@@ -1,9 +1,11 @@
 import React, { useState,useEffect } from 'react'
-import { Stack, Card,Button,Col } from "react-bootstrap";
+import { Col } from "react-bootstrap";
 import UNavBar from "../user/UNavBar";
-import {useNavigate, Link} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import axios from "axios";
+import  io  from "socket.io-client";
 
+const socket =io.connect("http://localhost:3001");
 
 
 
@@ -31,6 +33,7 @@ function QueueNum() {
   
 
   useEffect(()=>{
+    
     axios.get("http://localhost:3001/api/cp/queuenum",
     {
 
@@ -45,7 +48,13 @@ function QueueNum() {
   },[])
 
  
-  
+  useEffect(() => {
+    socket.on('receive_message',(data) =>{
+      console.log(data)
+      alert(data.message)
+    })
+})
+
     
         return (     <div>
           < UNavBar/><br/>

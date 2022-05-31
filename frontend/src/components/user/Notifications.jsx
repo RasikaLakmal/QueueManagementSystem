@@ -1,10 +1,33 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import { Stack, Card ,Row,Col,Button} from "react-bootstrap";
 import UNavBar from "../user/UNavBar";
-import {Link,useNavigate} from 'react-router-dom'
+import {Link} from 'react-router-dom'
+import io from 'socket.io-client' 
+import axios from "axios";
+const socket = io.connect("http://localhost:3001");
+
 
 function Notifications() {
+  const userToken= localStorage.getItem('ujsonwebtoken')
 
+  axios.interceptors.request.use(
+    config  => {
+        config.headers.authorization =`Bearer ${userToken}`;
+        console.log(config)
+        return config;
+    },
+    error =>{
+        return Promise.reject(error)
+    }
+  )
+
+  const [messageReceive, setMessageReceive] = useState()
+
+  useEffect(() => {
+    socket.on('receive_message',(data) =>{
+      setMessageReceive(data.message);
+    })
+  })
     
         return (
             <div><UNavBar/>
@@ -28,10 +51,12 @@ function Notifications() {
     <div class="card-header"><h3 style={{textAlign: "Left", color: "gray"}}>New Notification</h3><p style={{textAlign: "Center"}}>you are the next!</p></div>
   </Card>
   <br />          <Card border="primary" style={{ width: '99%' }}>
-    <div class="card-header"><h3 style={{textAlign: "Left", color: "gray"}}>New Notification</h3><p style={{textAlign: "Center"}}>It's your turn,now join with the customer care</p></div>
+    <div class="card-header"><h3 style={{textAlign: "Left", color: "gray"}}>New Notification</h3><p style={{textAlign: "Center"}}>It's your turn,now join with the customer care
+    {messageReceive}</p></div>
   </Card>
 </>
                 </Stack>
+               
           </div>
           </div></div></div>
         )

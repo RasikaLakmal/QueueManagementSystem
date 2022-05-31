@@ -29,6 +29,7 @@ function CpLogin(){
     }   
     ).then(response=>{
         setLoading(false);
+        localStorage.removeItem('jsonwebtoken')
         localStorage.setItem('jsonwebtoken',response.data.token)
         const counterToken= localStorage.getItem('jsonwebtoken')
         console.log("counterToken", counterToken)

@@ -11,7 +11,8 @@ function Home() {
 
 <div class="card-body">
         
-          <h1>Home</h1>
+          <h1>Cellcom</h1>
+          <h3>Customer Care</h3>
           <br/><br/> <br/><br/> <br/><br/> <br/><br/>
           <Link to="/ulog"> <Button variant="primary">User Login</Button></Link>
           <Link to="/cplog"> <Button variant="warning">Counter Login</Button></Link>

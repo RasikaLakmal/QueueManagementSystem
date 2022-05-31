@@ -28,6 +28,7 @@ function UserLogin(){
     }   
     ).then(response=>{
         setLoading(false);
+        localStorage.removeItem('ujsonwebtoken')
         localStorage.setItem('ujsonwebtoken',response.data.token)
         const userToken = localStorage.getItem('ujsonwebtoken')
         console.log("userToken", userToken)

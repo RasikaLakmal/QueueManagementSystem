@@ -1,8 +1,11 @@
 import React, { useEffect ,useState} from 'react'
-import {Card ,Row,Col,Button,Form} from "react-bootstrap";
+import {Card ,Row,Col,Form} from "react-bootstrap";
 import CNavbar from "../counterPerson/CNavBar"
-import {Link,useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import axios from "axios";
+import  io  from "socket.io-client";
+
+const socket =io.connect("http://localhost:3001");
 
 
 function Queue() {
@@ -25,6 +28,7 @@ function Queue() {
     }
   )
   useEffect(()=>{
+    
     axios.get("http://localhost:3001/api/issue/all",
     {
 
@@ -37,6 +41,9 @@ function Queue() {
       setRequestError(err)
     })
   },[])
+  const sendMessage = () => {
+    socket.emit('send_Message',{ message : 'Be Ready,It is your turn'});
+  };
   return (
     <div>
           <CNavbar/>
@@ -59,11 +66,14 @@ function Queue() {
                     <Col sm={{ span:8, offset: 1}} >
                     <Card border="primary" style={{ width: '109%' }}>
     <div class="card-header"><h1 style={{textAlign: "Left", color: "red"}}>{posts.issue_id}</h1><p style={{textAlign: "Center",fontSize: "25px"}}>{posts.name} : {posts.phone_no}</p></div>
-    <Row><Col md={{  offset: 10 }}>{<Button onClick={()=>{navigate('/vis/${posts.id}',{state:{id:posts.id}});}}>
+    <Row><Col md={{  offset: 10 }}>{<a onClick={()=>{navigate('/vis/${posts.id}',{state:{id:posts.id}});}}   >
                         
-                          
+    <input type="button" 
+                            value={ "Call"} 
+                            onClick={sendMessage}
+                            class="btn btn-secondary"/>
                             
-                        Call</Button>}
+                        </a>}
    </Col></Row>
   </Card>
   <br />
