@@ -9,9 +9,11 @@ const router = Router();
 router.post('/add',authMiddleware,issuesController.addIssue);
 router.get('/all',authCMiddleware,issuesController.getAllIssues);
 router.get('/get/:id',authCMiddleware,issuesController.getOneIssues);
+router.put('/cancel/:id',authCMiddleware,issuesController.cancelIssue);
 
 
 router.get('/c',counterController.getCounter);
-router.get('/counterid',authMiddleware,issuesController.getCounterId)
+ router.get('/counterid',authCMiddleware,issuesController.getCounterId)
+ router.get('/username',authMiddleware,issuesController.getUserName)
 
 export default router;

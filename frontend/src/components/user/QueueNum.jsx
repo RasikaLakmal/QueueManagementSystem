@@ -1,19 +1,22 @@
-import React, { useNavigate,useState,useEffect } from 'react'
+import React, { useState,useEffect } from 'react'
 import { Stack, Card,Button,Col } from "react-bootstrap";
 import UNavBar from "../user/UNavBar";
+import {useNavigate, Link} from 'react-router-dom'
 import axios from "axios";
-import io from "socket.io-client";
-const socket = io.connect("http://localhost:3001");
+
 
 
 
 
 function QueueNum() {
-  socket.emit()
+ 
     const [posts,setposts] =useState([])
   const [requestError,setRequestError]= useState()
+  const [error,setError]=useState(null);
+  const navigater = useNavigate()
+  
 
-  const userToken = localStorage.getItem('jsonwebtoken')
+  const userToken = localStorage.getItem('ujsonwebtoken')
 
   axios.interceptors.request.use(
     config  => {
@@ -40,6 +43,9 @@ function QueueNum() {
       setRequestError(err)
     })
   },[])
+
+ 
+  
     
         return (     <div>
           < UNavBar/><br/>
@@ -50,13 +56,17 @@ function QueueNum() {
                 <h1 style={{ color: "red", fontSize: "150px" }}>{post.ongoing}</h1>
               </div>
             </div><h2 style={{ marginTop: "10px", textAlign: "center" }}> Next: {post.ongoing + 1} </h2><h2 style={{ marginTop: "10px", textAlign: "center" }}> Your No: {post.issue_id} </h2><Col sm={{ span: 5, offset: 8 }}>
-                <Button
-                  type="submit"
-                  variant="danger"
-                  className="justify-content-end"
-                  value="Send Issue">
-                  Close
-                </Button>
+           <div> <input type="button" 
+                value={"Cancel"} 
+                className="border-0 text-white"
+                style={{marginTop:"1%", marginLeft:'1%', backgroundColor:'#0d47a1', }}
+                onClick={()=>{
+                  axios.put(`http://localhost:3001/api/issue/cancel/${post.issue_id})`)
+                    .then(response=>{
+                      navigater('/ais')
+                    }).catch(error=>{
+                      setError("some thing is wrong");
+                    });}}  /></div>
               </Col></>))}
     
         </div>

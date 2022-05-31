@@ -49,7 +49,7 @@ function CNavbar() {
                  <h5 
                             className="text-secondary"
                             style={{marginTop:"10px"}}>    
-                              Counter : {posts.counter_no}
+                              Counter :  {posts.map(post=>post.counter_id)}
                         </h5> &nbsp;&nbsp;
                    </Nav>
                 </Navbar.Collapse>
@@ -61,7 +61,7 @@ function CNavbar() {
                             className="btn btn-outline-secondary rounded " 
                             to="/"
                             style={{marginTop:"10px"}}>    
-                               Logout <BsPersonCircle/>
+                               {posts.map(post=>post.name)} <BsPersonCircle/>
                         </Link>&nbsp;&nbsp;
                     </Nav>
                 </Navbar.Collapse>

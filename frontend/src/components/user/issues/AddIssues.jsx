@@ -5,10 +5,19 @@ import { Button, Stack, Row, Col } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {useNavigate} from 'react-router-dom'
 import UNavBar from "../UNavBar";
-import io from "socket.io-client";
-const socket = io.connect("http://localhost:3001");
 
-const userToken= localStorage.getItem('jsonwebtoken')
+
+function AddIssues(){
+
+  const [email,setEmail] =useState('');
+  const[name,setName]=useState('');
+  const[phone_no,setPN]=useState('');
+  const[ issue,setIssue] =useState('');
+    const [error,setError]=useState(null);
+   const [loading,setLoading]=useState(false);
+   const navigater = useNavigate()
+
+   const userToken= localStorage.getItem('jsonwebtoken')
 
 console.log("userToken", userToken)
 
@@ -23,18 +32,8 @@ axios.interceptors.request.use(
   }
 )
 
-function AddIssues(){
-
-  const [email,setEmail] =useState('');
-  const[name,setName]=useState('');
-  const[phone_no,setPN]=useState('');
-  const[ issue,setIssue] =useState('');
-    const [error,setError]=useState(null);
-   const [loading,setLoading]=useState(false);
-   const navigater = useNavigate()
-
    const handleAddIssues = ()=>
-   { socket.emit("ai")
+   {
     setError(null);
     setLoading(true);
 
@@ -50,7 +49,7 @@ function AddIssues(){
       console.log(response)
       alert("Your Issue is submitted!")
       navigater('/qn')
-     
+      
     }).catch(error=>{
       setLoading(false)
 

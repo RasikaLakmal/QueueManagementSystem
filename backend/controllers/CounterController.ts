@@ -187,15 +187,15 @@ static doneNNext = async (req:Request,res:Response) => {
 
 static doneIssue = async (req:Request,res:Response) => {
 
-   await AppDataSource
-                .createQueryBuilder()
-                
-                
-                .update(Issues)
-                .set({ status: ['close']})
-                .where({ status: ['inprogress']})
-                .andWhere("counter_no = :counter_no", { counter_no:res.locals.jwt.counter_id })
-                .execute()
+    const {id} = req.params;
+        await AppDataSource
+            .createQueryBuilder()
+            .update(Issues)
+            .set({ status:  ["close"]})
+            .where("id = :id", { id: id })
+            .execute()
+
+        res.send('del')
 
                
 }

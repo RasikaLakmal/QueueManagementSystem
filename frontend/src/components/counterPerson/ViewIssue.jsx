@@ -16,7 +16,7 @@ function ViewIssue() {
   const navigate = useNavigate()
   
  
-  const counterToken = localStorage.getItem('counterJWT')
+  const counterToken = localStorage.getItem('cjsonwebtoken')
 
   axios.interceptors.request.use(
     config  => {
@@ -88,14 +88,14 @@ function ViewIssue() {
                 className="border-0 text-white"
                 style={{marginTop:"1%", marginLeft:'1%', backgroundColor:'#0d47a1', }}
                 onClick={()=>{
-                  axios.put(`http://localhost:3001/api/cp/doneissue`)
+                  axios.put(`http://localhost:3001/api/cp/doneissue/${post.id}`)
                     .then(response=>{
                       navigate('/q')
                     }).catch(error=>{
                       setError("some thing is wrong");
                     });}}  />
 
-            <input type="button"
+<input type="button"
                 value={"Done and Next"} 
                 disabled={loading}
                 className="border-0 text-white"
@@ -103,9 +103,7 @@ function ViewIssue() {
                 onClick={()=>{
                   axios.get(`http://localhost:3001/api/cp/doneandnxt/${post.id}`)
                   .then(response=>{
-                    setPutOne(response.data)
-                    {putOne.map(putone=>(<>
-                    navigate(`/api/issue/get/${putone.id}`)</>))}
+                      setposts(response.data)
                   }).catch(error=>{
                     setError("some thing is wrong");
                   })}}  />

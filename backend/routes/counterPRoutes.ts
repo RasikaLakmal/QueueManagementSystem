@@ -18,8 +18,8 @@ router.put('/update/:id',authMiddleware,counterPController.updateCPs);
 //router.get('/call',counterPController.getAllCPs);
 router.put('/counter/close',authMiddleware, counterController.closeCounter); 
 router.get('/queuenum',authMiddleware,counterController.queueNum)
-router.post('/doneandnxt/:id',authMiddleware,counterController.doneNNext)
-router.put('/doneissue',authMiddleware,counterController.doneIssue)
+router.get('/doneandnxt/:id',authMiddleware,counterController.doneNNext)
+router.put('/doneissue/:id',authMiddleware,counterController.doneIssue)
 
 
 

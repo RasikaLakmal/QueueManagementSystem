@@ -5,6 +5,7 @@ import { AppDataSource } from "../db";
 import {PostDto} from '../dto/getAllIssuesDto'
 import {getOneIssuesDto} from '../dto/getOneIssueDto'
 import {counterNumDto} from "../dto/counterNumDto"
+import {userNameDto} from "../dto/userNameDto"
 
 class issuesController{
 
@@ -205,21 +206,43 @@ class issuesController{
 
     };
 
-    static getCounterId = async (req:Request,res:Response) => {
-        const user = await AppDataSource
-            .createQueryBuilder()
-            .select("user")
-            .from(Counter, "user")
-            .where("user.status = :status ",{ status: "active" })
-            .andWhere("user.counter_no = :counter_no", { counter_no:res.locals.jwt.counter_id })
-            .getOne()
-        console.log(user)
-       
-        
-        
-        return res.json(user);
+        static getUserName = async (req:Request,res:Response) => {
+
+            let responseData : Array<userNameDto> = new Array();
+            responseData.push(new userNameDto({
+                 name:res.locals.jwt.name
+                }));
     
-    };
+            return res.send(responseData);
+    
+        };
+    
+        static getCounterId = async (req:Request,res:Response) => {
+    
+            let responseData : Array<counterNumDto> = new Array();
+            responseData.push(new counterNumDto({
+                
+                counter_id:res.locals.jwt.counter_id,
+                name:res.locals.jwt.name
+                }));
+    
+            return res.send(responseData);
+    
+        };
+
+    
+    static cancelIssue = async (req:Request,res:Response) => {
+    const {id} = req.params;
+    await AppDataSource
+        .createQueryBuilder()
+        .update(Issues)
+        .set({ status:  ["close"]})
+        .where("id = :id", { id: id })
+        .execute()
+
+    res.send('del')
+    }
+
 };
 export default issuesController;
 

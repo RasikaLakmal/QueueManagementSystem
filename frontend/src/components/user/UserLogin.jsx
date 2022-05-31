@@ -28,10 +28,10 @@ function UserLogin(){
     }   
     ).then(response=>{
         setLoading(false);
-        localStorage.setItem('jsonwebtoken',response.data.token)
-        const userToken = localStorage.getItem('jsonwebtoken')
+        localStorage.setItem('ujsonwebtoken',response.data.token)
+        const userToken = localStorage.getItem('ujsonwebtoken')
         console.log("userToken", userToken)
-        navigater('/ais')
+      
     }).catch(error=>{
         setLoading(false)
         
@@ -44,9 +44,25 @@ function UserLogin(){
             setError("Incorrect user name or password");
         }
     });
+    axios.get(`http://localhost:3001/api/user/usercheck/${email}`,{
 
-  
+    }).then(res=>{
+      console.log(res.data)
+      setposts(res.data)
+      if (res.data == false) {
+        console.log('get data if '+res.data)
+        navigater('/ais');
+      } else {
+        console.log('get data else '+res.data)
+        navigater('/qn');
+      }
+    }).catch(err=>{
+      console.log(err)
+      setRequestError(err)
+    })
 }
+  
+
   return (
     <div class="card" style={{width: "75%",marginTop:"9%",marginLeft:"15%",backgroundColor:"#white"}} >
 
