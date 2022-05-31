@@ -15,11 +15,12 @@ router.put('/update/:id',authMiddleware,counterPController.updateCPs);
 
 //counter routes
 
-router.get('/call',counterPController.getAllCPs);
+//router.get('/call',counterPController.getAllCPs);
 router.put('/counter/close',authMiddleware, counterController.closeCounter); 
 router.get('/queuenum',authMiddleware,counterController.queueNum)
 router.post('/doneandnxt/:id',authMiddleware,counterController.doneNNext)
-router.post('/doneissue',authMiddleware,counterController.doneIssue)
+router.put('/doneissue',authMiddleware,counterController.doneIssue)
+
 
 
 export default router;

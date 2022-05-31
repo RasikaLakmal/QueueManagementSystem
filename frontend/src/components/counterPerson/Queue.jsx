@@ -1,14 +1,17 @@
 import React, { useEffect ,useState} from 'react'
 import {Card ,Row,Col,Button,Form} from "react-bootstrap";
 import CNavbar from "../counterPerson/CNavBar"
-import {Link,useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import axios from "axios";
-
+import io from "socket.io-client";
+const socket = io.connect("http://localhost:3001");
 
 function Queue() {
   const [posts,setposts] =useState([])
   const [posts1,setposts1] =useState([])
   const [requestError,setRequestError]= useState()
+  const [error,setError]=useState(null);
+  const [loading,setLoading]=useState(false);
   const navigate = useNavigate()
 
   const counterToken = localStorage.getItem('jsonwebtoken')
@@ -23,23 +26,40 @@ function Queue() {
         return Promise.reject(error)
     }
   )
-  useEffect(()=>{
+  useEffect((x)=>{
+    socket.emit(x)
     axios.get("http://localhost:3001/api/issue/all",
     {
+      
 
     }).then(res=>{
       console.log(res)
       setposts(res.data)
-
+      
     }).catch(err=>{
       console.log(err)
       setRequestError(err)
     })
   },[])
+
+  const handleClose = ()=>{
+
+    // setError(null);
+    // setLoading(true);
+
+    // axios.put(`http://localhost:3001/api/cp/counter/clos`,
+    // {  
+      
+    // }).then(response=>{
+        
+    // }).catch(error=>{
+          
+    // });
+}
   return (
     <div>
           <CNavbar/>
-<br/><Row><Col md={{  offset: 10 }}><Button variant="danger" >Close Counter</Button></Col></Row>
+<br/><Row><Col md={{  offset: 10 }}><Button variant="danger"  >Close Counter</Button></Col></Row>
            {posts.map(posts=>(
 
 

@@ -12,6 +12,6 @@ router.get('/get/:id',authCMiddleware,issuesController.getOneIssues);
 
 
 router.get('/c',counterController.getCounter);
-
+router.get('/counterid',authMiddleware,issuesController.getCounterId)
 
 export default router;

@@ -48,7 +48,26 @@ async function main(){
 
           io.on("connection",(socket)=> {
              console.log('user connected:' +socket.id);
-          })
+         
+             socket.on('add issue',(response)=>{
+                socket.to(response).emit('added',response)
+
+            })
+
+            socket.on('add issue',(data)=>{
+               socket.to(data).emit('added',data)
+
+           })
+
+           socket.on('refreshData', function(x) {
+            // Your refresh data logic here (from second controller)
+          // emit the data then 
+          socket.emit('messages', x)      
+          });
+         
+            })
+
+         
   
 }
 app.route("/")

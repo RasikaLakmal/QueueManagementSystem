@@ -4,6 +4,7 @@ import {Counter} from "../entity/Counter"
 import { AppDataSource } from "../db";
 import {PostDto} from '../dto/getAllIssuesDto'
 import {getOneIssuesDto} from '../dto/getOneIssueDto'
+import {counterNumDto} from "../dto/counterNumDto"
 
 class issuesController{
 
@@ -202,6 +203,22 @@ class issuesController{
         console.log(responseOneData)
         return res.send(responseOneData);
 
+    };
+
+    static getCounterId = async (req:Request,res:Response) => {
+        const user = await AppDataSource
+            .createQueryBuilder()
+            .select("user")
+            .from(Counter, "user")
+            .where("user.status = :status ",{ status: "active" })
+            .andWhere("user.counter_no = :counter_no", { counter_no:res.locals.jwt.counter_id })
+            .getOne()
+        console.log(user)
+       
+        
+        
+        return res.json(user);
+    
     };
 };
 export default issuesController;
