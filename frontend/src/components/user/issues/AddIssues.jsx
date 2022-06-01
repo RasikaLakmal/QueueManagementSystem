@@ -17,7 +17,7 @@ function AddIssues(){
    const [loading,setLoading]=useState(false);
    const navigater = useNavigate()
 
-   const userToken= localStorage.getItem('jsonwebtoken')
+   const userToken= localStorage.getItem('ujsonwebtoken')
 
 console.log("userToken", userToken)
 
@@ -39,7 +39,7 @@ axios.interceptors.request.use(
 
     axios.post("http://localhost:3001/api/issue/add",
    {    
-       email:email,
+    
      name:name,
      phone_no:phone_no,
     issue:issue,
@@ -80,7 +80,7 @@ axios.interceptors.request.use(
           <Stack direction="horizontal" gap={5} className="d-flex justify-content-center">
               <Form as={Row}>
                   <br/>{error && <div className="error" style={{marginTop:"-10px",color:"red"}} >{error}</div>}
-                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                  {/* <Form.Group className="mb-3" controlId="formBasicEmail">
                       <Col sm={{ span: 10, offset: 1}}>
                           <Form.Control 
                                   type="email" 
@@ -88,7 +88,7 @@ axios.interceptors.request.use(
                                   value={email}
                                   onChange={e=>setEmail(e.target.value)} />
                       </Col>
-                  </Form.Group>
+                  </Form.Group> */}
 
                   <Form.Group className="mb-3" controlId="formBasicName">
                       <Col sm={{ span: 10, offset: 1}}>

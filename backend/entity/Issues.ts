@@ -14,7 +14,7 @@ export class Issues extends BaseEntity {
     issue_id:number
 
     //@Column({ nullable: true }
-    //u_email!: string
+    //u_email_alt!: string
 
     @Column({ nullable: true })
     issue: string

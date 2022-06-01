@@ -42,7 +42,8 @@ function Queue() {
     })
   },[])
   const sendMessage = () => {
-    socket.emit('send_Message',{ message : 'Be Ready,It is your turn'});
+    socket.emit('send_Message',{ message : 'Be Ready,It is your turn', issue_id: posts.map(post=>post.issue_id),
+    counter_no: posts.map(post=>post.counter_no)});
   };
   return (
     <div>

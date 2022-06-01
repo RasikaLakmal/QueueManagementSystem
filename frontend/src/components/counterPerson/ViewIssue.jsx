@@ -15,7 +15,7 @@ function ViewIssue() {
   const navigate = useNavigate()
   
  
-  const counterToken = localStorage.getItem('cjsonwebtoken')
+  const counterToken = localStorage.getItem('jsonwebtoken')
 
   axios.interceptors.request.use(
     config  => {

@@ -65,25 +65,6 @@ class issuesController{
                     ])
                     .execute();
 
-                    let is: Counter|any;
-                    is= await AppDataSource
-
-                    await AppDataSource
-                    .createQueryBuilder()
-                    .update(Issues,is)
-                    .set({ status: ['inprogress'] })
-                    .where("issue_id = :issue_id", { issue_id:1 })
-                    .andWhere("is.status = :status OR is.status = :status1",{ status: "", status1: "waiting" })
-                    .execute()
-
-                    let coun: Counter|any;
-                   coun= await AppDataSource
-                    .createQueryBuilder()
-                    .update(Counter)
-                    .set({ ongoing: 1 })
-                    .where("counter_no = :counter_no", { counter_no:actCount.id })
-                    .execute()
-                
                 return res.json(
                     'Your Issue added , Issue No : '+1+' in Counter no: '+actCount.id);
             } 
