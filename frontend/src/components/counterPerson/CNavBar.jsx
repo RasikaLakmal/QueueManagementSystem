@@ -1,6 +1,6 @@
 import React, { useEffect ,useState} from 'react'
 import Navbar from 'react-bootstrap/Navbar'
-import { Container, Nav } from "react-bootstrap";
+import { Container, Nav,Card } from "react-bootstrap";
 import {Link} from 'react-router-dom'
 import { BsPersonCircle } from "react-icons/bs";
 import axios from "axios";
@@ -39,16 +39,26 @@ function CNavbar() {
         setRequestError(err)
       })
     },[])
-  return (
+    
+    const logout = async () => {
+      try {
+        localStorage.removeItem('jsonwebtoken')
+       
+      }catch (error) {
+        console.log(error);         
+ }
+}
+
+    return (
     <div>
         <Navbar collapseOnSelect expand="lg" bg="light">
         <Container> 
                 <Navbar.Collapse className="justify-right">
-                 <Nav>
-                 <h5 
+                 <Nav>&nbsp;<h2>Counter</h2>
+                  <h5 
                             className="text-secondary"
-                            style={{marginTop:"10px"}}>    
-                              Counter :  {posts.map(post=>post.counter_id)}
+                            style={{marginTop:"50px"}}>    
+                             <Card border="primary"> Counter :  {posts.map(post=>post.counter_id)}</Card>
                         </h5> &nbsp;&nbsp;
                    </Nav>
                 </Navbar.Collapse>
@@ -59,7 +69,7 @@ function CNavbar() {
                         <Link 
                             className="btn btn-outline-secondary rounded " 
                             to="/"
-                            style={{marginTop:"10px"}}>    
+                            style={{marginTop:"10px"}} onClick={() => logout()}>   
                                {posts.map(post=>post.name)} <BsPersonCircle/>
                         </Link>&nbsp;&nbsp;
                     </Nav>

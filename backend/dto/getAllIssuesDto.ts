@@ -7,11 +7,11 @@ export class PostDto {
 
   constructor(obj : any){
     if(obj){
-      this.id = obj.id;
-      this.issue_id = obj.issue_id;
-      this.phone_no = obj.phone_no;
-      this.name = obj.name;
-      this.counter_no = obj.counterNoId;
+      this.id = obj.user_id;
+      this.issue_id = obj.user_issue_id;
+      this.phone_no = obj.user_phone_no;
+      this.name = obj.user_name;
+      this.counter_no = obj.user_counterNoId;
     }
   }
   }

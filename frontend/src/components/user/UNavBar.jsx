@@ -40,6 +40,15 @@ function UNavbar() {
         setRequestError(err)
       })
     },[])
+
+    const logout = async () => {
+      try {
+        localStorage.removeItem('ujsonwebtoken')
+       
+      }catch (error) {
+        console.log(error);         
+ }
+}
   
   return (
     <div>
@@ -56,7 +65,7 @@ function UNavbar() {
                         <Link 
                             className="btn btn-outline-secondary rounded " 
                             to="/"
-                            style={{marginTop:"10px"}}>    
+                            style={{marginTop:"10px"}} onClick={() => logout()}>    
                                {posts.map(post=>post.name)} <BsPersonCircle/>
                         </Link>&nbsp;&nbsp;
                     </Nav>

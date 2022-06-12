@@ -45,17 +45,17 @@ axios.interceptors.request.use(
     issue:issue,
     headers: {"Authorization" : `Bearer ${userToken}`} 
     }
-    ).then(response=>{
-      console.log(response)
+    ).then(response1=>{
+      console.log(response1)
       alert("Your Issue is submitted!")
       navigater('/qn')
-      
+      window.location.reload()
     }).catch(error=>{
       setLoading(false)
 
-      if(error.response.status === 400 || error.response.status === 401 || error.response.status === 409)
+      if(error.response1.status === 400 || error.response1.status === 401 || error.response1.status === 409)
       {
-          setError(error.response.data);
+          setError(error.response1.data);
           setError("Fill all the details");
       }
       else{

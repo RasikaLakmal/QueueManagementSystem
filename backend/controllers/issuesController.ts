@@ -6,6 +6,8 @@ import {PostDto} from '../dto/getAllIssuesDto'
 import {getOneIssuesDto} from '../dto/getOneIssueDto'
 import {counterNumDto} from "../dto/counterNumDto"
 import {userNameDto} from "../dto/userNameDto"
+import socket from 'socket.io'
+import {Brackets } from "typeorm";
 
 class issuesController{
 
@@ -118,17 +120,21 @@ class issuesController{
             .createQueryBuilder()
             .select("user")
             .from(Issues, "user")
-            .where("user.status = :status OR user.status = :status1",{ status: "inprogress", status1: "waiting" })
-            .andWhere("user.counter_no = :counter_no", { counter_no:res.locals.jwt.counter_id })
-            .orderBy({ "status": 'DESC'})
-            .getMany()
+            .where('user.counter_no = :counter_no', {counter_no:res.locals.jwt.counter_id })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where("user.status = :status", { status: "inprogress",})
+                    qb.orWhere("user.status = :status1", { status1: "waiting"  })
+                }),)
+            .orderBy({ "issue_id": 'ASC'})
+            .execute();
+
         console.log(user)
         let responseData : Array<PostDto> = new Array();
 
         for (const  use of user) {
             responseData.push(new PostDto(use));
         }
-        
         return res.send(responseData);
     
     };

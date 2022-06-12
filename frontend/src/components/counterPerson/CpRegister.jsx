@@ -42,6 +42,7 @@ function CpRegister(){
       }
       });
       navigater('/cplog')
+      window.location.reload()
   }
   return (
     <div class="card" style={{width: "75%",marginTop:"9%",marginLeft:"15%",backgroundColor:"#white"}} >

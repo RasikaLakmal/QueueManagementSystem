@@ -29,12 +29,18 @@ function CpLogin(){
     }   
     ).then(response=>{
         setLoading(false);
+        localStorage.clear();
         localStorage.removeItem('jsonwebtoken')
         localStorage.removeItem('ujsonwebtoken')
+        localStorage.removeItem('res.data')
+        localStorage.removeItem('res')
+        localStorage.removeItem('resqn')
+        localStorage.removeItem('response1')
         localStorage.setItem('jsonwebtoken',response.data.token)
         const counterToken= localStorage.getItem('jsonwebtoken')
         console.log("counterToken", counterToken)
         navigater('/q')
+        window.location.reload()
     }).catch(error=>{
         setLoading(false)
         if(error.response.status === 400 || error.response.status === 401 || error.response.status === 409)

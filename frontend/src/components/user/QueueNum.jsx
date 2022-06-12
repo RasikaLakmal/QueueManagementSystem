@@ -4,6 +4,8 @@ import UNavBar from "../user/UNavBar";
 import {useNavigate} from 'react-router-dom'
 import axios from "axios";
 import  io  from "socket.io-client";
+import {ToastContainer,toast,Zoom} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 const socket =io.connect("http://localhost:3001");
 
@@ -11,12 +13,16 @@ const socket =io.connect("http://localhost:3001");
 
 
 function QueueNum() {
- 
+
     const [posts,setposts] =useState([])
+    const [posts2,setposts2] =useState([])
+    const [posts3,setposts3] =useState([])
   const [requestError,setRequestError]= useState()
   const [error,setError]=useState(null);
   const navigater = useNavigate()
-  
+  const [recCounter, setRecCounter] = useState()
+
+ 
 
   const userToken = localStorage.getItem('ujsonwebtoken')
 
@@ -37,9 +43,9 @@ function QueueNum() {
     axios.get("http://localhost:3001/api/cp/queuenum",
     {
 
-    }).then(res=>{
-      console.log(res)
-      setposts(res.data)
+    }).then(resqn=>{
+      console.log(resqn)
+      setposts(resqn.data)
   
     }).catch(err=>{
       console.log(err)
@@ -48,19 +54,60 @@ function QueueNum() {
   },[])
 
  
-  useEffect(() => {
-    socket.on('receive_message',(data) =>{
-      console.log(data)
-      alert(data.message)
-    })
+//   useEffect(() => {
+//     socket.on('receive_message',(data) =>{
+//       console.log(data)
+      
+      
+     
+//     })
+// })
+
+// useEffect(() => {
+//   socket.on('resdat',(data) =>{
+//     setposts3(data)
+//     console.log(data)
+    
+//     alert(data.message)
+//   })
+// })
+// socket.on('receive_queuenumsd',(data) =>{
+//   if (data.counter_no == posts.map(post=>post.counter_no)) {
+//     setRecCounter(data.ongoing_No)
+//   }
+// })
+
+useEffect(() => {
+  socket.on('receive_queueNow',(data) =>{
+    console.log(data)
+    setposts3(data)
+    if ((data.issue_Id == posts.map(post=>post.issue_id))&&(data.counter_No == posts.map(post=>post.counterNoId))) {
+     
+      toast.info(data.message)
+      window.setTimeout(function() {  window.location.reload() }, 2000);
+     
+    }
+  })
 })
 
+useEffect(() => {
+  socket.on('receive_queueNext',(data) =>{
+    console.log(data)
     
+    if ((data.issue_Id == posts.map(post=>post.issue_id))&&(data.counter_No == posts.map(post=>post.counterNoId))) {
+      
+      toast.info(data.message)
+      window.setTimeout(function() {  window.location.reload() }, 2000);
+
+      
+    }
+  })
+})
         return (     <div>
           < UNavBar/><br/>
           {posts.map(post=>(
           <><h2 style={{ textAlign: "left", marginLeft: "10%" }}> Ongoing Queue</h2><div class="card" style={{ marginTop: "3%", width: "30%", marginLeft: "35%" }}>
-              <div class="card-body">
+              <div class="card-body"> <ToastContainer />
                 <h1 class="card-title">Current Number</h1>
                 <h1 style={{ color: "red", fontSize: "150px" }}>{post.ongoing}</h1>
               </div>

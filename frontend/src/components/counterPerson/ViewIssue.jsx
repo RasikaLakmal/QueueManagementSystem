@@ -4,6 +4,9 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import { Col, Row } from "react-bootstrap";
 import {useNavigate, useLocation } from 'react-router-dom'
 import CNavBar from '../counterPerson/CNavBar';
+import  io  from "socket.io-client";
+
+const socket =io.connect("http://localhost:3001");
 
 function ViewIssue() {
   
@@ -38,6 +41,11 @@ function ViewIssue() {
       })
       },[])
 
+      const sendQueue = (issue_id,counter_no) => {
+        socket.emit('send_queueNow',{ message: 'Be Ready,It is your turn',
+        issue_Id:(issue_id)+1,counter_No:counter_no });
+      };
+
   return (
     <div>
         <CNavBar/>
@@ -50,12 +58,12 @@ function ViewIssue() {
                 <InputGroup.Text  
                     className='text-danger rounded-circle secondary bg-body'
                     style={{marginTop:"1%", marginLeft:'1%', fontSize:'30px'}}>
-                        {post.issue_id}
+                       <h1 style={{textAlign: "center", color: "red",fontSize: "50px"}}><b>{post.issue_id}</b></h1>
                 </InputGroup.Text>
                 <InputGroup.Text  
                     className=" text-body border-0 bg-body"
                     style={{marginTop:"1%", marginLeft:'1%', fontSize:'30px'}}>
-                        {post.name}
+                      <p style={{textAlign: "left",fontSize: "25px"}}><b>{post.name}</b> </p>
                 </InputGroup.Text>
               </InputGroup>
               <InputGroup>
@@ -68,7 +76,7 @@ function ViewIssue() {
                 <InputGroup.Text  
                     className='text-body bg-body border-0'
                     style={{marginTop:"1%", marginLeft:'3%', fontSize:'30px'}}>
-                        Issue 
+                        <p style={{textAlign: "left",fontSize: "25px"}}><b>Issue </b></p>
                 </InputGroup.Text>
               </InputGroup>
               <InputGroup>
@@ -80,6 +88,8 @@ function ViewIssue() {
               </InputGroup>
               </InputGroup>
             </div>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;
         </div>
         <div><Row><Col md={{  offset: 8 }}>
             <input type="button" 
@@ -90,6 +100,8 @@ function ViewIssue() {
                   axios.put(`http://localhost:3001/api/cp/doneissue/${post.id}`)
                     .then(response=>{
                       navigate('/q')
+                      localStorage.removeItem('notifications')
+                      window.location.reload()
                     }).catch(error=>{
                       setError("some thing is wrong");
                     });}}  />
@@ -102,7 +114,11 @@ function ViewIssue() {
                 onClick={()=>{
                   axios.get(`http://localhost:3001/api/cp/doneandnxt/${post.id}`)
                   .then(response=>{
-                      setposts(response.data)
+                    navigate('/vis/${(post.id)+1}',{state:{id:(post.id)+1}})
+                    localStorage.removeItem('notifications')
+                    localStorage.removeItem('notifications2')
+                      sendQueue(post.issue_id,post.counter_no)
+                      window.location.reload()
                   }).catch(error=>{
                     setError("some thing is wrong");
                   })}}  />

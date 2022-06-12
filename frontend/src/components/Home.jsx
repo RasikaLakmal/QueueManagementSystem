@@ -4,7 +4,6 @@ import React from "react";
 
 
 
-
 function Home() {
     return (<div className="App">
     <div class="card" style={{width: "75%",marginTop:"13%",marginLeft:"15%",backgroundColor:"#white"}} >

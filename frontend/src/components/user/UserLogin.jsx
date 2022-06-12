@@ -4,6 +4,8 @@ import Form from 'react-bootstrap/Form'
 import { Button, Stack, Row, Col } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {useNavigate, Link} from 'react-router-dom'
+import  io  from "socket.io-client";
+const socket =io.connect("http://localhost:3001");
 
 function UserLogin(){
 
@@ -30,6 +32,12 @@ function UserLogin(){
         setLoading(false);
         localStorage.removeItem('ujsonwebtoken')
         localStorage.removeItem('jsonwebtoken')
+        localStorage.removeItem('res.data')
+        localStorage.removeItem('resqn.data')
+        localStorage.removeItem('resqn')
+        localStorage.removeItem('response1')
+        localStorage.removeItem('notifications')
+        localStorage.removeItem('notifications2')
         localStorage.setItem('ujsonwebtoken',response.data.token)
         const userToken = localStorage.getItem('ujsonwebtoken')
         console.log("userToken", userToken)
@@ -48,15 +56,19 @@ function UserLogin(){
     });
     axios.get(`http://localhost:3001/api/user/usercheck/${email}`,{
 
-    }).then(res=>{
-      console.log(res.data)
-      setposts(res.data)
-      if (res.data == false) {
-        console.log('get data if '+res.data)
+    }).then(res1=>{
+      console.log(res1.data)
+      setposts(res1.data)
+      if (res1.data == false) {
+        console.log('get data if '+res1.data)
         navigater('/ais');
+        window.location.reload()
       } else {
-        console.log('get data else '+res.data)
+        console.log('get data else '+res1.data)
+        localStorage.removeItem('resqn.data')
+        localStorage.removeItem('resqn')
         navigater('/qn');
+        window.location.reload()
       }
     }).catch(err=>{
       console.log(err)

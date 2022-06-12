@@ -10,6 +10,7 @@ import {AppDataSource} from './db'
 //import app from './app';
 import http from 'http';
 import {Server} from 'socket.io';
+import {Counter} from "./entity/Counter"
 
 const app = express();
 
@@ -53,6 +54,36 @@ async function main(){
                console.log(data)
                socket.broadcast.emit('receive_message',data)
            })
+
+           socket.on('send_queueNow',async (data) => {
+            //console.log(data)
+            socket.broadcast.emit('receive_queueNow',data)
+
+            socket.broadcast.emit('receive_queueNext',{
+                message: "Be Ready ,you are the next",
+                issue_Id:data.issue_Id + 1,
+                counter_No:data.counter_No
+            })
+
+            let counter : Counter|any;
+            counter =await AppDataSource
+                .createQueryBuilder()
+                .select('counter.ongoing')
+                .from(Counter,'counter')
+                .where('counter.id = :id', {id:data.counter_No})
+                .execute()
+
+             let valCounter = Number(Object.values(counter[0]))
+
+            socket.broadcast.emit('receive_Counter',{
+                counter_No:data.counter_No,
+                ongoing_No: valCounter
+            })
+        
+       
+            
+            
+        })
 
            socket.on('refreshData', function(x) {
             // Your refresh data logic here (from second controller)
